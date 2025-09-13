@@ -1,0 +1,10 @@
+spring:
+  profiles:
+    active: dev
+  application:
+    name: trakyflow-backend
+
+logging:
+  level:
+    org.springframework: WARN
+    com.trakyflow: INFO
