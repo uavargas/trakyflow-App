@@ -1,6 +1,7 @@
 package com.alonsocode.trakyflow.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,17 +19,34 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(unique = true, nullable = false)
+    @Email(message = "Email debe ser válido")
+    @NotBlank(message = "Email es requerido")
+    @Column(unique = true, nullable = false, length = 255)
     private String email;
     
-    @Column(nullable = false)
+    @NotBlank(message = "Contraseña es requerida")
+    @Size(min = 6, message = "Contraseña debe tener al menos 6 caracteres")
+    @Column(nullable = false, length = 255)
     private String password;
     
-    @Column(name = "first_name", nullable = false)
+    @NotBlank(message = "Nombre es requerido")
+    @Size(max = 100, message = "Nombre no puede exceder 100 caracteres")
+    @Column(name = "first_name", nullable = false, length = 100)
     private String firstName;
     
-    @Column(name = "last_name", nullable = false)
+    @NotBlank(message = "Apellido es requerido")
+    @Size(max = 100, message = "Apellido no puede exceder 100 caracteres")
+    @Column(name = "last_name", nullable = false, length = 100)
     private String lastName;
+    
+    @Column(name = "is_enabled", nullable = false)
+    private Boolean enabled = true;
+    
+    @Column(name = "last_login")
+    private LocalDateTime lastLogin;
+    
+    @Column(name = "email_verified", nullable = false)
+    private Boolean emailVerified = false;
     
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -64,7 +82,7 @@ public class User implements UserDetails {
     
     @Override
     public boolean isEnabled() {
-        return true;
+        return enabled != null ? enabled : true;
     }
     
     @PrePersist
@@ -76,5 +94,26 @@ public class User implements UserDetails {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
+    }
+    
+    // Métodos de utilidad
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
+    
+    public void updateLastLogin() {
+        this.lastLogin = LocalDateTime.now();
+    }
+    
+    public void verifyEmail() {
+        this.emailVerified = true;
+    }
+    
+    public void disable() {
+        this.enabled = false;
+    }
+    
+    public void enable() {
+        this.enabled = true;
     }
 }
