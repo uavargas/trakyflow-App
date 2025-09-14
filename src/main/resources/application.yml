@@ -3,6 +3,11 @@ spring:
     active: dev
   application:
     name: trakyflow-backend
+    # Configuración JWT temporal aquí
+jwt:
+  secret: esta-es-una-clave-secreta-muy-larga-y-segura-256-bits
+  expiration: 86400000
+
 
 logging:
   level:
